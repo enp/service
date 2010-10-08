@@ -4,6 +4,32 @@
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="bean" class="ru.itx.beans.Bean" init-method="init" destroy-method="destroy"/>
+	<bean id="httpServer" class="org.eclipse.jetty.server.Server" init-method="start" destroy-method="stop">
+		<property name="connectors">
+			<list>
+				<bean class="org.eclipse.jetty.server.nio.SelectChannelConnector">
+					<property name="port" value="8080"/>
+				</bean>
+			</list>
+		</property>
+		<property name="handler">
+			<bean id="handlers" class="org.eclipse.jetty.server.handler.HandlerList">
+				<property name="handlers">
+					<list>
+						<bean class="org.eclipse.jetty.server.handler.ResourceHandler">
+							<property name="directoriesListed" value="true"/>
+							<property name="welcomeFiles">
+								<list>
+									<value>index.html</value>
+								</list>
+							</property>
+							<property name="resourceBase" value="#{new org.springframework.core.io.ClassPathResource('web').getURI().toString()}"/>
+						</bean>
+						<bean class="org.eclipse.jetty.server.handler.DefaultHandler"/>
+					</list>
+				</property>
+			</bean>
+		</property>
+	</bean>
 
 </beans>
