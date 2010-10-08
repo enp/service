@@ -18,12 +18,37 @@ package ru.itx.service;
 
 import ru.itx.beans.Bean;
 
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
+
 public class ServiceApp {
 
 	private Bean bean;
 
-	public ServiceApp() {
+	public ServiceApp() throws Exception {
+		updateClassPath();
 		bean = new Bean();
+	}
+
+	private void updateClassPath() throws Exception {
+		File lib = new File("lib");
+		if (lib.exists()) {
+			for (File entry : lib.listFiles())
+				addClassPathEntry(entry.toURI().toURL());
+		}
+		File conf = new File("conf");
+		if (conf.exists())
+			addClassPathEntry(conf.toURI().toURL());
+	}
+
+	private void addClassPathEntry(URL url) throws Exception {
+		URLClassLoader sysloader = (URLClassLoader)ClassLoader.getSystemClassLoader();
+		Class sysclass = URLClassLoader.class;
+		Method method = sysclass.getDeclaredMethod("addURL", new Class[]{URL.class});
+		method.setAccessible(true);
+		method.invoke(sysloader, new Object[]{url});
 	}
 
 	public void init(String[] args) {
