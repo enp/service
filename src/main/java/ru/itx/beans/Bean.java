@@ -13,45 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package ru.itx.beans;
 
-package ru.itx.service;
+public class Bean {
 
-import ru.itx.beans.Bean;
-
-public class ServiceApp {
-
-	private Bean bean;
-
-	public ServiceApp() {
-		bean = new Bean();
-	}
-
-	public void init(String[] args) {
-		bean.init();
+	public void init() {
+		System.out.println("init");
 	}
 
 	public void start() {
-		bean.start();
+		System.out.println("start");
 	}
 
 	public void stop() {
-		bean.stop();
+		System.out.println("stop");
 	}
 
 	public void destroy() {
-		bean.destroy();
-	}
-
-	public static void main(String[] args) throws Exception {
-		final ServiceApp serviceApp = new ServiceApp();
-		serviceApp.init(args);
-		serviceApp.start();
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			public void run() {
-				serviceApp.stop();
-				serviceApp.destroy();
-			}
-		});
-		Thread.sleep(Long.MAX_VALUE);
+		System.out.println("destroy");
 	}
 }
