@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+
+	<appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>log/master.log</file>
+		<append>true</append>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %-5level %thread %logger{36} %file:%line - %msg%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<maxIndex>3</maxIndex>
+			<FileNamePattern>log/master.log.%i</FileNamePattern>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>10000000</maxFileSize>
+		</triggeringPolicy>
+	</appender>
+
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %-5level %thread %logger{36} %file:%line - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="ru.itx" level="DEBUG"/>
+
+	<root level="INFO">
+		<appender-ref ref="file"/>
+		<appender-ref ref="stdout"/>
+	</root>
+
+</configuration>

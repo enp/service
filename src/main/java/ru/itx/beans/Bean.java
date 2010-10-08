@@ -15,21 +15,26 @@
  */
 package ru.itx.beans;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Bean {
 
+	private Logger logger = LoggerFactory.getLogger(getClass());
+
 	public void init() {
-		System.out.println("init");
+		logger.debug("init");
 	}
 
 	public void start() {
-		System.out.println("start");
+		logger.debug("start");
 	}
 
 	public void stop() {
-		System.out.println("stop");
+		logger.debug("stop");
 	}
 
 	public void destroy() {
-		System.out.println("destroy");
+		logger.debug("destroy");
 	}
 }
