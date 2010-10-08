@@ -26,14 +26,6 @@ public class Bean {
 		logger.debug("init");
 	}
 
-	public void start() {
-		logger.debug("start");
-	}
-
-	public void stop() {
-		logger.debug("stop");
-	}
-
 	public void destroy() {
 		logger.debug("destroy");
 	}

@@ -16,7 +16,7 @@
 
 package ru.itx.service;
 
-import ru.itx.beans.Bean;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -25,11 +25,10 @@ import java.net.URLClassLoader;
 
 public class ServiceApp {
 
-	private Bean bean;
+	private Object context;
 
 	public ServiceApp() throws Exception {
 		updateClassPath();
-		bean = new Bean();
 	}
 
 	private void updateClassPath() throws Exception {
@@ -52,28 +51,25 @@ public class ServiceApp {
 	}
 
 	public void init(String[] args) {
-		bean.init();
+		if (args != null && args.length > 0)
+			context = new ClassPathXmlApplicationContext(args);
+		else
+			context = new ClassPathXmlApplicationContext(new String []{"context.xml"});
 	}
 
-	public void start() {
-		bean.start();
-	}
+	public void start() {}
 
-	public void stop() {
-		bean.stop();
-	}
+	public void stop() {}
 
 	public void destroy() {
-		bean.destroy();
+		((ClassPathXmlApplicationContext)context).close();
 	}
 
 	public static void main(String[] args) throws Exception {
 		final ServiceApp serviceApp = new ServiceApp();
 		serviceApp.init(args);
-		serviceApp.start();
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
-				serviceApp.stop();
 				serviceApp.destroy();
 			}
 		});
