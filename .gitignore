@@ -6,3 +6,5 @@
 *.iws
 target
 log
+db
+derby.log
