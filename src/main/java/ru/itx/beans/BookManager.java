@@ -13,29 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package ru.itx.beans;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.List;
 
-public class Bean {
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+public class BookManager {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
-	private BookManager bookManager;
 
-	public void setBookManager(BookManager bookManager) {
-		this.bookManager = bookManager;
-	}
+	@PersistenceContext
+    private EntityManager em;
 
-	public void init() {
-		logger.debug("init");
-		logger.info(bookManager.createBook("A", "B", new Date()).toString());
-		logger.info(bookManager.getBooks().toString());
+    public List<Book> getBooks() {
+		return (List<Book>)em.createQuery("select b from Book b").getResultList();
 	}
+	
+	public Book createBook(String name, String author, Date date) {
+        Book book = new Book(name, author, date);
+		em.persist(book);
+        return book;
+    }
 
-	public void destroy() {
-		logger.debug("destroy");
-	}
 }

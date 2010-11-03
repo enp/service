@@ -16,12 +16,16 @@
 
 package ru.itx.service;
 
+import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.logging.Handler;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class ServiceApp {
 
@@ -29,6 +33,7 @@ public class ServiceApp {
 
 	public ServiceApp() throws Exception {
 		updateClassPath();
+		setupLogging();
 	}
 
 	private void updateClassPath() throws Exception {
@@ -48,6 +53,13 @@ public class ServiceApp {
 		Method method = sysclass.getDeclaredMethod("addURL", new Class[]{URL.class});
 		method.setAccessible(true);
 		method.invoke(sysloader, new Object[]{url});
+	}
+
+	private void setupLogging() {
+		Logger rootLogger = LogManager.getLogManager().getLogger("");
+		for (Handler handler : rootLogger.getHandlers())
+			rootLogger.removeHandler(handler);
+		SLF4JBridgeHandler.install();
 	}
 
 	public void init(String[] args) {
