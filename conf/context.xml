@@ -25,6 +25,7 @@
 							</property>
 							<property name="resourceBase" value="#{new org.springframework.core.io.ClassPathResource('web').getURI().toString()}"/>
 						</bean>
+						<bean class="ru.itx.beans.AjaxHandler"/>
 						<bean class="org.eclipse.jetty.server.handler.DefaultHandler"/>
 					</list>
 				</property>
