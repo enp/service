@@ -17,7 +17,7 @@
 function request() {
 	$("#divAjax").html("response: waiting ...");
 	$.ajax({
-		url: "/ajax",
+		url: "/ajax-"+$("#typeAjax").val(),
 		cache: false,
 		success: function(response){
 			$("#divAjax").html("response: " + response);

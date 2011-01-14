@@ -16,29 +16,72 @@
 
 package ru.itx.beans;
 
+import org.eclipse.jetty.continuation.Continuation;
+import org.eclipse.jetty.continuation.ContinuationSupport;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class AjaxHandler extends AbstractHandler {
 
+	private Logger logger = LoggerFactory.getLogger(getClass());
+
+	private List<Continuation> continuations = new ArrayList<Continuation>();
+
+	public AjaxHandler() {
+		Thread thread = new Thread(new Runnable() {
+			public void run() {
+				while(true){
+					try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
+					logger.debug("waiting requests: {}", continuations);
+					for(Continuation continuation : continuations) {
+						if (continuation.isSuspended()) {
+							logger.debug("async resume: {}", continuation);
+							continuation.resume();
+						}
+					}
+				}
+			}
+		});
+		thread.setDaemon(true);
+		thread.start();
+	}
+
 	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
-		if (target.equals("/ajax")) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+		logger.debug("target : {}", target);
+		if (target.equals("/ajax-sync")) {
+			try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+			logger.debug("sync");
+			processRequest(baseRequest, response);
+		} else if (target.equals("/ajax-async")) {
+			Continuation continuation = ContinuationSupport.getContinuation(request);
+			if (continuation.isInitial()) {
+				continuations.add(continuation);
+				logger.debug("async suspend: {}", continuation);
+				continuation.suspend();
+				continuation.undispatch();
+			} else {
+				logger.debug("async continue: {}", continuation);
+				continuations.remove(continuation);
+				processRequest(baseRequest, response);
 			}
-			response.setContentType("text/html;charset=utf-8");
-			response.setStatus(HttpServletResponse.SC_OK);
-			baseRequest.setHandled(true);
-			response.getWriter().println(new Date());
 		}
+	}
+
+	private void processRequest(Request baseRequest, HttpServletResponse response) throws IOException {
+		response.setContentType("text/html;charset=utf-8");
+		response.setStatus(HttpServletResponse.SC_OK);
+		baseRequest.setHandled(true);
+		response.getWriter().println(new Date());
 	}
 }

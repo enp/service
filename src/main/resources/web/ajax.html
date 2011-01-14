@@ -12,7 +12,13 @@
 		<p/>
 		<table>
 			<tr>
-				<td  style="width: 1%"><input id="buttonAjax" type="button" value="Request" onclick="request()"/></td>
+				<td style="width: 120px">
+					<select id="typeAjax" size="1" style="width: 100%">
+						<option value="sync">Synchronous</option>
+						<option value="async">Asynchronous</option>
+					</select>
+				</td>
+				<td style="width: 1%"><input id="buttonAjax" type="button" value="Request" onclick="request()"/></td>
 				<td><div id="divAjax">responce : none</div></td>
 			</tr>
 		</table>
